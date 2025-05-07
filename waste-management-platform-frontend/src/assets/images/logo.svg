@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>垃圾管理平台Logo</title>
+    <g id="Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Background" fill="#1E88E5" cx="100" cy="100" r="90"></circle>
+        <g id="RecycleSymbol" transform="translate(50, 50)" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M50,0 C22.4,0 0,22.4 0,50 C0,77.6 22.4,100 50,100 C77.6,100 100,77.6 100,50 C100,22.4 77.6,0 50,0 Z M78.5,76 L70,76 L70,72 L67,72 L60,56 L50,80 L59,80 L59,84 L38,84 L38,80 L44,80 L48.5,70 L40,50 L32,71 L38,71 L38,75 L20,75 L20,71 L27,71 L39,40 L30,40 L30,36 L44,36 L44,40 L42,40 L48,55 L54,40 L52,40 L52,36 L66,36 L66,40 L62,40 L51,65 L65,65 L72,78 L78.5,78 L78.5,76 Z"></path>
+        </g>
+    </g>
+</svg> 

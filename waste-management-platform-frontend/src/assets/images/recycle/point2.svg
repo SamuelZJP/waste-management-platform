@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#b3e5fc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e1f5fe;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="800" height="400" fill="url(#skyGrad2)" />
+  
+  <!-- 地面 -->
+  <rect x="0" y="330" width="800" height="70" fill="#a5d6a7" />
+  
+  <!-- 小区建筑 -->
+  <rect x="50" y="100" width="200" height="230" fill="#eeeeee" stroke="#e0e0e0" stroke-width="2" />
+  <rect x="550" y="130" width="180" height="200" fill="#eeeeee" stroke="#e0e0e0" stroke-width="2" />
+  
+  <!-- 小区围墙 -->
+  <rect x="20" y="310" width="760" height="20" fill="#bdbdbd" />
+  <rect x="20" y="310" width="20" height="60" fill="#9e9e9e" />
+  <rect x="760" y="310" width="20" height="60" fill="#9e9e9e" />
+  
+  <!-- 垃圾分类中心建筑 -->
+  <rect x="300" y="200" width="200" height="110" fill="#81d4fa" stroke="#4fc3f7" stroke-width="2" />
+  <rect x="280" y="190" width="240" height="10" fill="#0288d1" />
+  
+  <!-- 屋顶 -->
+  <polygon points="300,200 500,200 470,170 330,170" fill="#29b6f6" />
+  
+  <!-- 门 -->
+  <rect x="380" y="260" width="40" height="50" fill="#0277bd" />
+  
+  <!-- 分类区域 -->
+  <rect x="250" y="310" width="300" height="20" fill="#9e9e9e" />
+  
+  <!-- 分类垃圾桶 -->
+  <rect x="270" y="280" width="30" height="40" fill="#2196f3" />
+  <rect x="320" y="280" width="30" height="40" fill="#4caf50" />
+  <rect x="370" y="280" width="30" height="40" fill="#f44336" />
+  <rect x="420" y="280" width="30" height="40" fill="#9e9e9e" />
+  <rect x="470" y="280" width="30" height="40" fill="#ff9800" />
+  
+  <!-- 标识牌 -->
+  <rect x="350" y="220" width="100" height="30" fill="#ffffff" stroke="#0288d1" stroke-width="2" />
+  <text x="400" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#01579b">垃圾分类中心</text>
+</svg> 
