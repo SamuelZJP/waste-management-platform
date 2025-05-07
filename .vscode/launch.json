@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-WasteManagementPlatformBackendApplication<waste-management-platform-backend>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.mitagret.waste_management_platform_backend.WasteManagementPlatformBackendApplication",
+            "projectName": "waste-management-platform-backend",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Vite-Frontend-Dev-Server",
+            "cwd": "${workspaceFolder}/waste-management-platform-frontend",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
+            "serverReadyAction": {
+                "pattern": "Local:.+(https?://\\S+)",
+                "uriFormat": "%s",
+                "action": "openExternally"
+            }
+        }
+    ]
+}

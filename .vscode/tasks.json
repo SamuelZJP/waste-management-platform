@@ -1,0 +1,61 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "前端: 启动开发服务器",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/waste-management-platform-frontend && npm run dev",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "前端: 构建生产版本",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/waste-management-platform-frontend && npm run build",
+            "problemMatcher": [],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "前端: 预览构建版本",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/waste-management-platform-frontend && npm run preview",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "后端: 启动Spring Boot应用",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/waste-management-platform-backend && ./mvnw spring-boot:run",
+            "windows": {
+                "command": "cd ${workspaceFolder}/waste-management-platform-backend && .\\mvnw.cmd spring-boot:run"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "全栈: 启动前后端",
+            "dependsOn": [
+                "前端: 启动开发服务器",
+                "后端: 启动Spring Boot应用"
+            ],
+            "problemMatcher": []
+        }
+    ]
+} 
