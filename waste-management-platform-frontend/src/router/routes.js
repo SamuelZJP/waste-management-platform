@@ -25,12 +25,6 @@ export default [
         component: () => import('@/views/waste/RecognizePage.vue'),
         meta: { title: '垃圾识别' }
       },
-    //   {
-    //     path: 'waste/detail/:id',
-    //     name: 'WasteDetail',
-    //     component: () => import('@/views/waste/DetailPage.vue'),
-    //     meta: { title: '垃圾详情' }
-    //   },
       {
         path: 'recycle/map',
         name: 'RecycleMap',
@@ -72,13 +66,7 @@ export default [
         name: 'Login',
         component: () => import('@/views/user/LoginPage.vue'),
         meta: { title: '登录' }
-      },
-    //   {
-    //     path: 'register',
-    //     name: 'Register',
-    //     component: () => import('@/views/user/RegisterPage.vue'),
-    //     meta: { title: '注册' }
-    //   }
+      }
     ]
   },
   // 管理员未登录路由
@@ -112,73 +100,92 @@ export default [
         component: () => import('@/views/admin/DashboardPage.vue'),
         meta: { title: '控制台' }
       },
-      // 回收站管理
-      // {
-      //   path: 'stations/list',
-      //   name: 'StationsList',
-      //   component: () => import('@/views/admin/stations/ListPage.vue'),
-      //   meta: { title: '回收站列表' }
-      // },
-      // {
-      //   path: 'stations/devices',
-      //   name: 'DevicesList',
-      //   component: () => import('@/views/admin/stations/DevicesPage.vue'),
-      //   meta: { title: '设备管理' }
-      // },
-      // 用户管理
-      // {
-      //   path: 'users/list',
-      //   name: 'UsersList',
-      //   component: () => import('@/views/admin/users/ListPage.vue'),
-      //   meta: { title: '用户列表' }
-      // },
-      // {
-      //   path: 'admins/list',
-      //   name: 'AdminsList',
-      //   component: () => import('@/views/admin/users/AdminsPage.vue'),
-      //   meta: { title: '管理员列表' }
-      // },
-      // 反馈管理
-      // {
-      //   path: 'feedbacks',
-      //   name: 'AdminFeedbacks',
-      //   component: () => import('@/views/admin/feedbacks/ListPage.vue'),
-      //   meta: { title: '反馈处理' }
-      // },
-      // 数据统计
-      // {
-      //   path: 'data',
-      //   name: 'DataAnalysis',
-      //   component: () => import('@/views/admin/data/AnalysisPage.vue'),
-      //   meta: { title: '数据统计' }
-      // },
-      // 系统设置
-      // {
-      //   path: 'settings',
-      //   name: 'SystemSettings',
-      //   component: () => import('@/views/admin/settings/SettingsPage.vue'),
-      //   meta: { title: '系统设置' }
-      // },
-      // 个人资料
-      // {
-      //   path: 'profile',
-      //   name: 'AdminProfile',
-      //   component: () => import('@/views/admin/settings/ProfilePage.vue'),
-      //   meta: { title: '个人资料' }
-      // },
-      // 通知管理
-      // {
-      //   path: 'notifications',
-      //   name: 'AdminNotifications',
-      //   component: () => import('@/views/admin/notifications/ListPage.vue'),
-      //   meta: { title: '通知消息' }
-      // },
-      // {
-      //   path: 'notifications/:id',
-      //   name: 'AdminNotificationDetail',
-      //   component: () => import('@/views/admin/notifications/DetailPage.vue'),
-      //   meta: { title: '通知详情' }
-      // }
+      // 垃圾站管理路由
+      {
+        path: 'stations/map',
+        name: 'AdminStationsMap',
+        component: () => import('@/views/admin/stations/MapPage.vue'),
+        meta: { title: '垃圾站地图' }
+      },
+      {
+        path: 'stations/status',
+        name: 'AdminStationsStatus',
+        component: () => import('@/views/admin/stations/StatusPage.vue'),
+        meta: { title: '垃圾站状态监控' }
+      },
+      {
+        path: 'stations/issues',
+        name: 'AdminStationsIssues',
+        component: () => import('@/views/admin/stations/IssuesPage.vue'),
+        meta: { title: '垃圾站异常处理' }
+      },
+      {
+        path: 'stations/:id',
+        name: 'AdminStationDetail',
+        component: () => import('@/views/admin/stations/DetailPage.vue'),
+        meta: { title: '垃圾站详情' }
+      },
+      // 通知管理路由
+      {
+        path: 'notifications',
+        name: 'AdminNotifications',
+        component: () => import('@/views/admin/notifications/ListPage.vue'),
+        meta: { title: '通知消息' }
+      },
+      {
+        path: 'notifications/:id',
+        name: 'AdminNotificationDetail',
+        component: () => import('@/views/admin/notifications/DetailPage.vue'),
+        meta: { title: '通知详情' }
+      },
+      // 数据统计路由
+      {
+        path: 'statistics',
+        name: 'AdminStatistics',
+        component: () => import('@/views/admin/data/StatisticsPage.vue'),
+        meta: { title: '数据统计' }
+      },
+      // 用户管理路由
+      {
+        path: 'users/list',
+        name: 'AdminUsers',
+        component: () => import('@/views/admin/users/ListPage.vue'),
+        meta: { title: '居民用户管理' }
+      },
+      {
+        path: 'users/detail/:id',
+        name: 'AdminUserDetail',
+        component: () => import('@/views/admin/users/DetailPage.vue'),
+        meta: { title: '用户详情' }
+      },
+      // 管理员管理路由
+      {
+        path: 'admins/list',
+        name: 'AdminAdmins',
+        component: () => import('@/views/admin/users/AdminListPage.vue'),
+        meta: { title: '管理员用户管理' }
+      },
+      // 任务管理路由
+      {
+        path: 'tasks',
+        name: 'AdminTasks',
+        component: () => import('@/views/admin/tasks/ListPage.vue'),
+        meta: { title: '任务管理' }
+      },
+      // 问题反馈路由
+      {
+        path: 'issues',
+        name: 'AdminFeedback',
+        component: () => import('@/views/admin/feedback/ListPage.vue'),
+        meta: { title: '问题反馈' }
+      },
+      // 系统设置路由
+      {
+        path: 'settings',
+        name: 'AdminSettings',
+        component: () => import('@/views/admin/settings/SettingsPage.vue'),
+        meta: { title: '系统设置' }
+      }
     ]
   },
   {
