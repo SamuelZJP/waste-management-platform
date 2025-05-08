@@ -116,7 +116,7 @@ const getCategoryTagType = (category) => {
 // 处理文件选择
 const handleFileChange = (file) => {
   const isImage = file.raw.type.startsWith('image/');
-  const isLt2M = file.raw.size / 1024 / 1024 < 2;
+  const isLt2M = file.raw.size / 1024 / 1024 < 10;
   
   if (!isImage) {
     ElMessage.error('只能上传图片文件!');
@@ -124,7 +124,7 @@ const handleFileChange = (file) => {
   }
   
   if (!isLt2M) {
-    ElMessage.error('图片大小不能超过2MB!');
+    ElMessage.error('图片大小不能超过10MB!');
     return false;
   }
   
