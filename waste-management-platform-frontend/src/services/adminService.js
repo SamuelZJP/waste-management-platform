@@ -777,14 +777,14 @@ export function getUsersList(params) {
             records: [
               {
                 time: '2023-05-14 10:15:30',
-                station: '1号楼垃圾站',
+                station: '回收站A',
                 category: '厨余垃圾',
                 weight: '2.3',
                 points: 12
               },
               {
                 time: '2023-05-10 16:20:45',
-                station: '3号楼垃圾站',
+                station: '回收站B',
                 category: '可回收物',
                 weight: '1.5',
                 points: 15
@@ -807,7 +807,7 @@ export function getUsersList(params) {
             records: [
               {
                 time: '2023-05-13 09:10:20',
-                station: '5号楼垃圾站',
+                station: '回收站C',
                 category: '有害垃圾',
                 weight: '0.8',
                 points: 18
@@ -830,7 +830,7 @@ export function getUsersList(params) {
             records: [
               {
                 time: '2023-04-25 14:30:15',
-                station: '7号楼垃圾站',
+                station: '回收站D',
                 category: '其他垃圾',
                 weight: '3.2',
                 points: 8
