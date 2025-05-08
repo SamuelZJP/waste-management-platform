@@ -166,10 +166,12 @@
             </div>
           </template>
           <div class="chart-container">
-            <!-- 这里放饼图，实际项目中应使用ECharts等库 -->
-            <div class="mock-chart">
-              <img src="https://via.placeholder.com/400x300?text=垃圾分类占比图" alt="垃圾分类占比" />
-            </div>
+            <!-- 替换占位图为echarts组件 -->
+            <e-charts
+              :option="pieChartOption"
+              style="width: 100%; height: 100%;"
+              autoresize
+            />
           </div>
         </el-card>
       </el-col>
@@ -185,10 +187,12 @@
             </div>
           </template>
           <div class="chart-container">
-            <!-- 这里放折线图，实际项目中应使用ECharts等库 -->
-            <div class="mock-chart">
-              <img src="https://via.placeholder.com/400x300?text=回收趋势图" alt="回收趋势图" />
-            </div>
+            <!-- 替换占位图为echarts组件 -->
+            <e-charts
+              :option="lineChartOption"
+              style="width: 100%; height: 100%;"
+              autoresize
+            />
           </div>
         </el-card>
       </el-col>
@@ -371,7 +375,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
   Opportunity, User, Histogram, Comment, 
@@ -396,10 +400,10 @@ const selectedStationId = ref('all'); // 默认查看全部垃圾站
 // 管理员信息
 const adminInfo = reactive({
   id: '1',
-  name: '张管理',
+  name: '管理员',
   avatar: '/src/assets/images/avatar-admin.svg',
   communityId: '1',
-  communityName: '阳光花园小区',
+  communityName: '上海财经大学浙江学院',
   role: 'property_admin'
 });
 
@@ -566,6 +570,154 @@ const getDeviceStatusText = (status) => {
     default: return '未知';
   }
 };
+
+// 饼图配置
+const pieChartOption = computed(() => {
+  return {
+    title: {
+      text: '垃圾分类占比',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: '{a} <br/>{b}: {c} ({d}%)'
+    },
+    legend: {
+      orient: 'vertical',
+      left: 10,
+      top: 'center',
+      data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
+    },
+    series: [
+      {
+        name: '垃圾分类',
+        type: 'pie',
+        radius: ['50%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: false,
+          position: 'center'
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '18',
+            fontWeight: 'bold'
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          { value: 1048, name: '厨余垃圾' },
+          { value: 735, name: '可回收物' },
+          { value: 580, name: '有害垃圾' },
+          { value: 484, name: '其他垃圾' }
+        ]
+      }
+    ]
+  };
+});
+
+// 折线图配置
+const lineChartOption = computed(() => {
+  // 生成近7天的日期标签
+  const dateLabels = [];
+  const now = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(now.getDate() - i);
+    dateLabels.push(`${date.getMonth() + 1}/${date.getDate()}`);
+  }
+  
+  return {
+    title: {
+      text: '近7天回收趋势',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾', '总量'],
+      bottom: 0
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '15%',
+      top: '15%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: dateLabels
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value} kg'
+      }
+    },
+    series: [
+      {
+        name: '厨余垃圾',
+        type: 'line',
+        stack: 'Total',
+        data: [120, 132, 101, 134, 90, 230, 210],
+        smooth: true
+      },
+      {
+        name: '可回收物',
+        type: 'line',
+        stack: 'Total',
+        data: [220, 182, 191, 234, 290, 330, 310],
+        smooth: true
+      },
+      {
+        name: '有害垃圾',
+        type: 'line',
+        stack: 'Total',
+        data: [50, 32, 21, 54, 30, 10, 20],
+        smooth: true
+      },
+      {
+        name: '其他垃圾',
+        type: 'line',
+        stack: 'Total',
+        data: [320, 332, 301, 334, 390, 330, 320],
+        smooth: true
+      },
+      {
+        name: '总量',
+        type: 'line',
+        stack: 'Total',
+        data: [710, 678, 614, 756, 800, 900, 860],
+        lineStyle: {
+          width: 3,
+          shadowColor: 'rgba(0,0,0,0.3)',
+          shadowBlur: 10,
+          shadowOffsetY: 8
+        },
+        symbolSize: 8,
+        smooth: true
+      }
+    ]
+  };
+});
+
+// 更新图表时间范围
+watch(chartTimeRange, (value) => {
+  // 可以根据时间范围更新饼图数据
+  // 实际项目中应调用API获取不同时间范围的数据
+  console.log('图表时间范围变化:', value);
+});
 
 // 处理垃圾站选择变更
 const handleStationChange = async (stationId) => {

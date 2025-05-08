@@ -116,10 +116,10 @@
             </div>
           </template>
           <div class="chart-container">
-            <!-- 实际项目中应使用ECharts等图表库 -->
-            <img 
-              :src="`https://via.placeholder.com/600x300?text=垃圾分类${categoryChartType === 'pie' ? '饼图' : '柱状图'}`" 
-              :alt="`垃圾分类${categoryChartType === 'pie' ? '饼图' : '柱状图'}`" 
+            <e-charts
+              :option="categoryChartOption"
+              style="width: 100%; height: 100%;"
+              autoresize
             />
           </div>
         </el-card>
@@ -138,10 +138,10 @@
             </div>
           </template>
           <div class="chart-container">
-            <!-- 实际项目中应使用ECharts等图表库 -->
-            <img 
-              :src="`https://via.placeholder.com/600x300?text=回收趋势图(${trendChartInterval})`" 
-              :alt="`回收趋势图(${trendChartInterval})`" 
+            <e-charts
+              :option="trendChartOption"
+              style="width: 100%; height: 100%;"
+              autoresize
             />
           </div>
         </el-card>
@@ -162,10 +162,10 @@
             </div>
           </template>
           <div class="chart-container">
-            <!-- 实际项目中应使用ECharts等图表库 -->
-            <img 
-              :src="`https://via.placeholder.com/600x300?text=用户参与图表(${userChartType}用户)`" 
-              :alt="`用户参与图表(${userChartType}用户)`" 
+            <e-charts
+              :option="userChartOption"
+              style="width: 100%; height: 100%;"
+              autoresize
             />
           </div>
         </el-card>
@@ -181,23 +181,13 @@
               </el-button>
             </div>
           </template>
-          <el-table
-            :data="stationRanking"
-            style="width: 100%"
-          >
-            <el-table-column type="index" label="排名" width="80" />
-            <el-table-column prop="name" label="垃圾站" min-width="150" />
-            <el-table-column prop="weight" label="回收量(kg)" width="120" />
-            <el-table-column label="占比" width="120">
-              <template #default="scope">
-                <el-progress 
-                  :percentage="scope.row.percentage" 
-                  :color="getRandomColor(scope.$index)"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column prop="userCount" label="用户数" width="100" />
-          </el-table>
+          <div class="chart-container ranking-chart">
+            <e-charts
+              :option="rankingChartOption"
+              style="width: 100%; height: 100%;"
+              autoresize
+            />
+          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -301,7 +291,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { 
   CaretTop, CaretBottom, Download, Refresh
@@ -579,6 +569,318 @@ const mockStatisticsData = () => {
   totalItems.value = activeTab.value === 'date' ? 15 : 
     activeTab.value === 'station' ? stations.value.length : 4;
 };
+
+// 垃圾分类占比图表配置
+const categoryChartOption = computed(() => {
+  if (categoryChartType.value === 'pie') {
+    return {
+      title: {
+        text: '垃圾分类占比',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c}kg ({d}%)'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 10,
+        top: 'middle',
+        data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
+      },
+      series: [
+        {
+          name: '垃圾分类',
+          type: 'pie',
+          radius: '55%',
+          center: ['55%', '50%'],
+          data: [
+            { value: 612.2, name: '厨余垃圾' },
+            { value: 459.2, name: '可回收物' },
+            { value: 153.0, name: '有害垃圾' },
+            { value: 306.1, name: '其他垃圾' }
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    };
+  } else {
+    return {
+      title: {
+        text: '垃圾分类占比',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        },
+        formatter: '{b}: {c}kg'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: '{value} kg'
+        }
+      },
+      series: [
+        {
+          name: '重量',
+          type: 'bar',
+          data: [612.2, 459.2, 153.0, 306.1],
+          itemStyle: {
+            color: function(params) {
+              const colors = ['#67C23A', '#409EFF', '#F56C6C', '#E6A23C'];
+              return colors[params.dataIndex];
+            }
+          },
+          label: {
+            show: true,
+            position: 'top',
+            formatter: '{c} kg'
+          }
+        }
+      ]
+    };
+  }
+});
+
+// 回收趋势图表配置
+const trendChartOption = computed(() => {
+  // 根据选择的时间间隔生成数据
+  let xAxisData, data;
+  const now = new Date();
+  
+  if (trendChartInterval.value === 'day') {
+    // 显示最近7天
+    xAxisData = Array.from({length: 7}, (_, i) => {
+      const date = new Date(now);
+      date.setDate(date.getDate() - 6 + i);
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    });
+    data = [120, 132, 101, 134, 90, 230, 210];
+  } else if (trendChartInterval.value === 'week') {
+    // 显示最近4周
+    xAxisData = Array.from({length: 4}, (_, i) => `第${i + 1}周`);
+    data = [520, 632, 701, 834];
+  } else {
+    // 显示最近6个月
+    xAxisData = Array.from({length: 6}, (_, i) => {
+      const date = new Date(now);
+      date.setMonth(date.getMonth() - 5 + i);
+      return `${date.getMonth() + 1}月`;
+    });
+    data = [2200, 1820, 1910, 2340, 2900, 3300];
+  }
+  
+  return {
+    title: {
+      text: '回收趋势',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'axis',
+      formatter: '{b}<br />{a}: {c} kg'
+    },
+    xAxis: {
+      type: 'category',
+      data: xAxisData
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value} kg'
+      }
+    },
+    series: [
+      {
+        name: '回收总量',
+        type: 'line',
+        data: data,
+        symbolSize: 8,
+        smooth: true,
+        markPoint: {
+          data: [
+            { type: 'max', name: '最大值' },
+            { type: 'min', name: '最小值' }
+          ]
+        },
+        markLine: {
+          data: [{ type: 'average', name: '平均值' }]
+        },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: 'rgba(64, 158, 255, 0.5)'
+              },
+              {
+                offset: 1,
+                color: 'rgba(64, 158, 255, 0.1)'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  };
+});
+
+// 用户参与情况图表配置
+const userChartOption = computed(() => {
+  // 根据选择的用户类型生成数据
+  let seriesData;
+  
+  if (userChartType.value === 'all') {
+    seriesData = [120, 200, 150, 80, 70, 110, 130];
+  } else if (userChartType.value === 'active') {
+    seriesData = [80, 120, 90, 50, 40, 70, 90];
+  } else {
+    seriesData = [40, 80, 60, 30, 30, 40, 40];
+  }
+  
+  return {
+    title: {
+      text: '用户参与情况',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: '参与用户数',
+        type: 'bar',
+        barWidth: '60%',
+        data: seriesData,
+        itemStyle: {
+          color: function(params) {
+            const colors = ['#67C23A', '#67C23A', '#67C23A', '#67C23A', '#67C23A', '#409EFF', '#409EFF'];
+            return colors[params.dataIndex];
+          }
+        },
+        label: {
+          show: true,
+          position: 'top'
+        }
+      }
+    ]
+  };
+});
+
+// 垃圾站排名图表配置
+const rankingChartOption = computed(() => {
+  if (stationRanking.value.length === 0) {
+    return {};
+  }
+  
+  // 按回收量从高到低排序
+  const sortedStations = [...stationRanking.value].sort((a, b) => b.weight - a.weight);
+  
+  const names = sortedStations.map(item => item.name);
+  const values = sortedStations.map(item => item.weight);
+  
+  return {
+    title: {
+      text: '垃圾站回收量排名',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      },
+      formatter: '{b}: {c} kg'
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value} kg'
+      }
+    },
+    yAxis: {
+      type: 'category',
+      data: names,
+      inverse: true
+    },
+    series: [
+      {
+        name: '回收量',
+        type: 'bar',
+        data: values,
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '{c} kg'
+        },
+        itemStyle: {
+          color: function(params) {
+            // 根据排名生成从深到浅的颜色
+            const colors = ['#409EFF', '#53a8ff', '#66b1ff', '#79bbff', '#8cc5ff', '#a0cfff'];
+            return colors[Math.min(params.dataIndex, colors.length - 1)];
+          }
+        }
+      }
+    ]
+  };
+});
+
+// 监听图表类型切换
+watch(categoryChartType, () => {
+  // 实际项目中可能需要重新获取数据
+  console.log('垃圾分类图表类型切换:', categoryChartType.value);
+});
+
+watch(trendChartInterval, () => {
+  // 实际项目中可能需要重新获取数据
+  console.log('回收趋势时间间隔切换:', trendChartInterval.value);
+});
+
+watch(userChartType, () => {
+  // 实际项目中可能需要重新获取数据
+  console.log('用户参与情况类型切换:', userChartType.value);
+});
 
 onMounted(() => {
   // 设置默认日期范围为最近15天

@@ -7,6 +7,8 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import BaiduMap from 'vue-baidu-map-3x'
+import Echarts from 'vue-echarts'
+import * as echarts from 'echarts'
 
 // 创建应用实例
 const app = createApp(App)
@@ -15,6 +17,9 @@ const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
+app.component('e-charts',Echarts)
+
+app.config.globalProperties.$echarts = echarts
 
 // 使用路由和Element Plus
 app.use(router)

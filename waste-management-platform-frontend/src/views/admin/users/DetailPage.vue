@@ -52,7 +52,7 @@
                     @click="handleToggleStatus"
                   >
                     <el-icon><CircleClose v-if="userInfo.status === 'normal'" /></el-icon>
-                    <el-icon><Check v-else /></el-icon>
+                    <el-icon v-if="userInfo.status !== 'normal'"><Check /></el-icon>
                     {{ userInfo.status === 'normal' ? '禁用账号' : '启用账号' }}
                   </el-button>
                 </div>
