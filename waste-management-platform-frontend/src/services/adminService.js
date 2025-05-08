@@ -3,6 +3,7 @@
  */
 import request from '@/utils/request';
 import { adminLoginResponse, adminRegisterResponse } from '@/mock/admin';
+import { recyclePoints } from '@/mock/recycle';
 
 // 使用mock数据模拟API请求
 const useMock = true;
@@ -447,75 +448,32 @@ export function getStationsList(params = {}) {
   if (useMock) {
     return new Promise(resolve => {
       setTimeout(() => {
-        // 使用模拟数据
-        const stationsList = [
-          {
-            id: '1',
-            name: '1号楼垃圾站',
-            address: '小区东北角1号楼旁',
-            status: 'normal',
-            deviceCount: 5,
-            todayVolume: 120.5,
-            capacity: 45,
-            lastUpdate: '2023-05-15 10:30:45',
-            position: { x: 25, y: 30 }
-          },
-          {
-            id: '2',
-            name: '3号楼垃圾站',
-            address: '小区中心3号楼旁',
-            status: 'normal',
-            deviceCount: 6,
-            todayVolume: 98.2,
-            capacity: 60,
-            lastUpdate: '2023-05-15 10:15:22',
-            position: { x: 45, y: 45 }
-          },
-          {
-            id: '3',
-            name: '5号楼垃圾站',
-            address: '小区西南角5号楼旁',
-            status: 'warning',
-            deviceCount: 4,
-            todayVolume: 156.8,
-            capacity: 85,
-            lastUpdate: '2023-05-15 09:45:10',
-            position: { x: 65, y: 60 }
-          },
-          {
-            id: '4',
-            name: '7号楼垃圾站',
-            address: '小区东南角7号楼旁',
-            status: 'error',
-            deviceCount: 5,
-            todayVolume: 56.3,
-            capacity: 30,
-            lastUpdate: '2023-05-15 08:20:55',
-            position: { x: 75, y: 35 }
-          },
-          {
-            id: '5',
-            name: '9号楼垃圾站',
-            address: '小区西北角9号楼旁',
-            status: 'normal',
-            deviceCount: 4,
-            todayVolume: 88.7,
-            capacity: 50,
-            lastUpdate: '2023-05-15 10:05:18',
-            position: { x: 20, y: 65 }
-          },
-          {
-            id: '6',
-            name: '11号楼垃圾站',
-            address: '小区北门11号楼旁',
-            status: 'normal',
-            deviceCount: 5,
-            todayVolume: 102.4,
-            capacity: 55,
-            lastUpdate: '2023-05-15 09:30:40',
-            position: { x: 40, y: 15 }
+        // 使用recycle.js中的数据，转换为管理端需要的格式
+        const stationsList = recyclePoints.map(point => {
+          // 将用户端status(0,1,2)转换为管理端status(normal,warning,error)
+          let status;
+          switch(point.status) {
+            case 1: status = 'normal'; break;
+            case 2: status = 'warning'; break;
+            case 0: status = 'error'; break;
+            default: status = 'normal';
           }
-        ];
+          
+          return {
+            id: point.id.toString(),
+            name: point.name,
+            address: point.address,
+            status: status,
+            deviceCount: Math.floor(Math.random() * 6) + 2, // 随机设备数量
+            todayVolume: Math.floor(Math.random() * 100) + 50, // 随机今日回收量
+            capacity: point.capacity,
+            lastUpdate: new Date().toLocaleString(), // 当前时间作为最后更新时间
+            position: { 
+              x: ((point.longitude - 119.7) * 500 + 50), // 简单转换经纬度到百分比位置
+              y: ((point.latitude - 29.08) * 500 + 50)
+            }
+          };
+        });
         
         // 根据状态筛选
         let filteredList = [...stationsList];
@@ -808,7 +766,7 @@ export function getUsersList(params) {
             username: '张明',
             phone: '138****1234',
             email: 'zhangming@example.com',
-            address: '北京市朝阳区某某小区1号楼',
+            address: '上海财经大学浙江学院',
             status: 'normal',
             registerTime: '2023-01-15 09:25:36',
             lastLogin: '2023-05-15 18:30:12',
@@ -838,7 +796,7 @@ export function getUsersList(params) {
             username: '李华',
             phone: '139****5678',
             email: 'lihua@example.com',
-            address: '北京市海淀区某某小区2号楼',
+            address: '上海财经大学浙江学院',
             status: 'normal',
             registerTime: '2023-02-20 15:40:22',
             lastLogin: '2023-05-14 10:15:08',
@@ -861,7 +819,7 @@ export function getUsersList(params) {
             username: '王芳',
             phone: '137****9012',
             email: 'wangfang@example.com',
-            address: '北京市西城区某某小区3号楼',
+            address: '上海财经大学浙江学院',
             status: 'disabled',
             registerTime: '2023-03-05 11:18:45',
             lastLogin: '2023-04-28 16:42:30',

@@ -21,23 +21,11 @@
     
     <div class="map-container">
       <div class="map-view">
-        <div class="map-placeholder">
-          <img src="@/assets/images/map-placeholder.svg" alt="地图" class="map-image" />
-          <div 
-            v-for="point in displayPoints" 
-            :key="point.id" 
-            class="map-marker" 
-            :style="{
-              left: getMarkerPosition(point).x + '%',
-              top: getMarkerPosition(point).y + '%',
-              backgroundColor: getStatusColor(point.status)
-            }"
-            @click="selectRecyclePoint(point)"
-            :class="{ 'marker-active': selectedPoint && selectedPoint.id === point.id }"
-          >
-            <span class="marker-label">{{ point.id }}</span>
-          </div>
-        </div>
+        <BaiduMap 
+          :markers="displayPoints"
+          @marker-click="selectRecyclePoint"
+          @map-ready="handleMapReady"
+        />
       </div>
       
       <div class="points-list">
@@ -162,6 +150,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Search, Location, Clock, Position } from '@element-plus/icons-vue';
 import { getNearbyRecyclePoints, getRecyclePointCapacity } from '@/services/recycleService';
+import BaiduMap from '@/components/map/Map.vue';
 
 const router = useRouter();
 const recyclePoints = ref([]);
@@ -205,16 +194,12 @@ const getCapacityColor = (capacity) => {
   return '#f56c6c';
 };
 
-// 获取标记位置（模拟地图位置计算，实际应根据经纬度计算）
+// 获取标记位置（替换为真实的经纬度位置，不再需要模拟）
 const getMarkerPosition = (point) => {
-  // 这里用一个简单算法模拟经纬度到像素的转换
-  // 实际项目中应该使用真实地图API计算
-  const xPercent = ((point.longitude - 116.3) * 10) % 90 + 5;
-  const yPercent = ((point.latitude - 39.9) * 10) % 85 + 5;
-  
+  // 这里假设已经有经纬度数据，不需要模拟计算
   return {
-    x: xPercent,
-    y: yPercent
+    x: ((point.longitude - 116.3) * 10) % 90 + 5, // 不再使用
+    y: ((point.latitude - 39.9) * 10) % 85 + 5  // 不再使用
   };
 };
 
@@ -286,6 +271,13 @@ const goToDetail = (id) => {
   router.push(`/recycle/detail/${id}`);
 };
 
+// 处理地图准备完成事件
+const handleMapReady = ({BMap, map}) => {
+  console.log('百度地图加载完成', map);
+  // 地图加载完成后，自动加载附近的回收点
+  loadAllRecyclePoints();
+};
+
 onMounted(() => {
   loadAllRecyclePoints();
 });
@@ -333,45 +325,6 @@ onMounted(() => {
   overflow: hidden;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   position: relative;
-}
-
-.map-placeholder {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.map-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.map-marker {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #67c23a;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transform: translate(-50%, -50%);
-  transition: all 0.3s;
-  z-index: 1;
-}
-
-.map-marker:hover, .marker-active {
-  width: 40px;
-  height: 40px;
-  z-index: 2;
-}
-
-.marker-label {
-  font-weight: bold;
 }
 
 .points-list {

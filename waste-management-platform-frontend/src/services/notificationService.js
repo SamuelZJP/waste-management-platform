@@ -31,6 +31,15 @@ export function getNotificationList(params) {
 }
 
 /**
+ * 获取通知列表 (别名，兼容已有代码)
+ * @param {Object} params - 查询参数
+ * @returns {Promise}
+ */
+export function getNotifications(params) {
+  return getNotificationList(params);
+}
+
+/**
  * 标记通知为已读
  * @param {number} notificationId - 通知ID
  * @returns {Promise}
@@ -47,6 +56,15 @@ export function markNotificationRead(notificationId) {
     url: `/notification/read/${notificationId}`,
     method: 'put'
   });
+}
+
+/**
+ * 标记通知为已读 (别名，兼容已有代码)
+ * @param {number} notificationId - 通知ID
+ * @returns {Promise}
+ */
+export function markAsRead(notificationId) {
+  return markNotificationRead(notificationId);
 }
 
 /**
@@ -94,5 +112,29 @@ export function getUnreadCount() {
   return request({
     url: '/notification/unread/count',
     method: 'get'
+  });
+}
+
+/**
+ * 删除通知
+ * @param {number} notificationId - 通知ID
+ * @returns {Promise}
+ */
+export function deleteNotification(notificationId) {
+  if (useMock) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve({
+          code: 200,
+          message: '通知已删除',
+          data: null,
+          timestamp: new Date().getTime()
+        });
+      }, 300);
+    });
+  }
+  return request({
+    url: `/notification/${notificationId}`,
+    method: 'delete'
   });
 } 

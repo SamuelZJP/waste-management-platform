@@ -15,12 +15,12 @@ export const adminData = {
     createTime: '2025-01-15 10:00:00'
   },
   stations: [
-    { id: '1', name: '海淀区西二旗回收站' },
-    { id: '2', name: '朝阳区望京回收站' },
-    { id: '3', name: '东城区建国门回收站' },
-    { id: '4', name: '西城区西单回收站' },
-    { id: '5', name: '丰台区方庄回收站' },
-    { id: '6', name: '石景山区鲁谷回收站' }
+    { id: '1', name: '回收站A' },
+    { id: '2', name: '回收站B' },
+    { id: '3', name: '回收站C' },
+    { id: '4', name: '回收站D' },
+    { id: '5', name: '回收站E' },
+    { id: '6', name: '回收站F' }
   ],
   devices: [
     { id: '1', name: '压缩设备-A1', type: '垃圾压缩机', status: 'normal' },

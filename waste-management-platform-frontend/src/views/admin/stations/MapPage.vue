@@ -27,31 +27,13 @@
       </template>
       
       <div class="map-container">
-        <!-- 地图容器，实际项目中应集成高德地图或百度地图等 -->
-        <div class="mock-map">
-          <img src="https://via.placeholder.com/1200x500?text=垃圾站分布地图" alt="垃圾站分布地图" />
-          
-          <!-- 模拟地图上的标记点 -->
-          <div 
-            v-for="station in filteredStations" 
-            :key="station.id"
-            class="map-marker"
-            :class="getMarkerClass(station.status)"
-            :style="{
-              left: `${station.position.x}%`,
-              top: `${station.position.y}%`
-            }"
-            @click="selectStation(station)"
-          >
-            <el-tooltip 
-              :content="`${station.name} (${getStatusText(station.status)})`"
-              placement="top"
-              :visible="selectedStationId === station.id"
-            >
-              <el-icon><Location /></el-icon>
-            </el-tooltip>
-          </div>
-        </div>
+        <!-- 替换模拟地图为真实百度地图 -->
+        <BaiduMap 
+          :markers="mapMarkers"
+          @marker-click="selectStation"
+          @map-ready="handleMapReady"
+          class="station-map"
+        />
       </div>
     </el-card>
     
@@ -189,6 +171,7 @@ import { useRouter } from 'vue-router';
 import { Refresh, Location, Search } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { getStationsList } from '@/services/adminService';
+import BaiduMap from '@/components/map/Map.vue';
 
 const router = useRouter();
 const stations = ref([]);
@@ -367,21 +350,50 @@ const getStatusType = (status) => {
   }
 };
 
-// 获取标记点类名
-const getMarkerClass = (status) => {
-  switch (status) {
-    case 'normal': return 'marker-normal';
-    case 'warning': return 'marker-warning';
-    case 'error': return 'marker-error';
-    default: return '';
-  }
-};
-
 // 获取容量状态
 const getCapacityStatus = (capacity) => {
   if (capacity >= 90) return 'exception';
   if (capacity >= 70) return 'warning';
   return 'success';
+};
+
+// 转换管理端垃圾站数据为地图标记点数据
+const mapMarkers = computed(() => {
+  return filteredStations.value.map(station => {
+    // 计算或使用实际的经纬度
+    let longitude = station.position ? 
+      (119.7032393 + (station.position.x - 51.6) * 0.002) : 
+      119.7032393;
+    
+    let latitude = station.position ? 
+      (29.0855113 + (station.position.y - 52.65) * 0.002) : 
+      29.0855113;
+
+    // let longitude = ((station.longitude - 116.3) * 10) % 90 + 5;
+    // let latitude = ((station.latitude - 39.9) * 10) % 85 + 5;
+    
+    // 转换状态字符串为数字，以便地图组件识别
+    let numericStatus;
+    switch(station.status) {
+      case 'normal': numericStatus = 1; break;
+      case 'warning': numericStatus = 2; break;
+      case 'error': numericStatus = 0; break;
+      default: numericStatus = 1;
+    }
+    
+    return {
+      ...station,
+      longitude,
+      latitude,
+      status: numericStatus, // 数字状态用于地图标记
+      originalStatus: station.status // 保留原始状态字符串
+    };
+  });
+});
+
+// 处理地图准备完成事件
+const handleMapReady = ({BMap, map}) => {
+  console.log('管理端百度地图加载完成', map);
 };
 
 onMounted(() => {
@@ -439,53 +451,9 @@ onMounted(() => {
   border: 1px solid #e0e0e0;
 }
 
-.mock-map {
+.station-map {
   width: 100%;
   height: 100%;
-  position: relative;
-}
-
-.mock-map img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.map-marker {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  margin-left: -16px;
-  margin-top: -32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s;
-  z-index: 10;
-}
-
-.map-marker i {
-  font-size: 20px;
-}
-
-.marker-normal {
-  background-color: #67c23a;
-}
-
-.marker-warning {
-  background-color: #e6a23c;
-}
-
-.marker-error {
-  background-color: #f56c6c;
-}
-
-.map-marker:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .station-info-section {

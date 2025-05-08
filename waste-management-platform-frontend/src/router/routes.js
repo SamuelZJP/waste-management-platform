@@ -10,6 +10,7 @@ export default [
       {
         path: '',
         name: 'Home',
+        component: () => import('@/components/map/Map.vue'),
         component: () => import('@/views/home/HomePage.vue'),
         meta: { title: '首页' }
       },

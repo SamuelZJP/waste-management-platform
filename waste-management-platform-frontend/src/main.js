@@ -6,6 +6,7 @@ import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import BaiduMap from 'vue-baidu-map-3x'
 
 // 创建应用实例
 const app = createApp(App)
@@ -18,6 +19,8 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 使用路由和Element Plus
 app.use(router)
 app.use(ElementPlus, { size: 'default', zIndex: 3000 })
-
+app.use(BaiduMap, {
+  ak: '9jFQ71HDXSRknzpwToVtwsVtkc6EZJGg',
+})
 // 挂载应用
 app.mount('#app')
