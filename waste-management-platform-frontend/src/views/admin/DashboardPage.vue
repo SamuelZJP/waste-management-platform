@@ -391,11 +391,176 @@ import {
   getWarningStations,
   getTodayTasks
 } from '@/services/adminService';
+import VChart from 'vue-echarts';
 
 const router = useRouter();
 const helpDialogVisible = ref(false);
 const chartTimeRange = ref('week');
 const selectedStationId = ref('all'); // 默认查看全部垃圾站
+
+// 饼图配置
+const pieChartOption = computed(() => {
+  return {
+    tooltip: {
+      trigger: 'item',
+      formatter: '{a} <br/>{b}: {c} ({d}%)'
+    },
+    legend: {
+      orient: 'horizontal',
+      bottom: 10,
+      data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
+    },
+    series: [
+      {
+        name: '垃圾分类',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: false,
+          position: 'center'
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '16',
+            fontWeight: 'bold'
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          { value: 40, name: '厨余垃圾', itemStyle: { color: '#67C23A' } },
+          { value: 30, name: '可回收物', itemStyle: { color: '#409EFF' } },
+          { value: 10, name: '有害垃圾', itemStyle: { color: '#F56C6C' } },
+          { value: 20, name: '其他垃圾', itemStyle: { color: '#909399' } }
+        ]
+      }
+    ]
+  };
+});
+
+// 折线图配置
+const lineChartOption = computed(() => {
+  return {
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['总回收量', '厨余垃圾', '可回收物', '有害垃圾', '其他垃圾'],
+      bottom: 10
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '15%',
+      top: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: getLastSevenDays()
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value} kg'
+      }
+    },
+    series: [
+      {
+        name: '总回收量',
+        type: 'line',
+        stack: 'Total',
+        data: [120, 132, 101, 134, 90, 230, 210],
+        smooth: true,
+        lineStyle: {
+          width: 3,
+          color: '#409EFF'
+        },
+        itemStyle: {
+          color: '#409EFF'
+        }
+      },
+      {
+        name: '厨余垃圾',
+        type: 'line',
+        stack: 'Category',
+        data: [48, 53, 40, 54, 36, 92, 84],
+        smooth: true,
+        lineStyle: {
+          width: 2,
+          color: '#67C23A'
+        },
+        itemStyle: {
+          color: '#67C23A'
+        }
+      },
+      {
+        name: '可回收物',
+        type: 'line',
+        stack: 'Category',
+        data: [36, 40, 30, 40, 27, 69, 63],
+        smooth: true,
+        lineStyle: {
+          width: 2,
+          color: '#409EFF'
+        },
+        itemStyle: {
+          color: '#409EFF'
+        }
+      },
+      {
+        name: '有害垃圾',
+        type: 'line',
+        stack: 'Category',
+        data: [12, 13, 10, 13, 9, 23, 21],
+        smooth: true,
+        lineStyle: {
+          width: 2,
+          color: '#F56C6C'
+        },
+        itemStyle: {
+          color: '#F56C6C'
+        }
+      },
+      {
+        name: '其他垃圾',
+        type: 'line',
+        stack: 'Category',
+        data: [24, 26, 21, 27, 18, 46, 42],
+        smooth: true,
+        lineStyle: {
+          width: 2,
+          color: '#909399'
+        },
+        itemStyle: {
+          color: '#909399'
+        }
+      }
+    ]
+  };
+});
+
+// 获取最近7天日期
+const getLastSevenDays = () => {
+  const dates = [];
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    dates.push(`${month}/${day}`);
+  }
+  return dates;
+};
 
 // 管理员信息
 const adminInfo = reactive({
@@ -403,6 +568,7 @@ const adminInfo = reactive({
   name: '管理员',
   avatar: '/src/assets/images/avatar-admin.svg',
   communityId: '1',
+  communityName: '上海财经大学浙江学院',
   communityName: '上海财经大学浙江学院',
   role: 'property_admin'
 });
@@ -1138,6 +1304,11 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.chart {
+  width: 100%;
+  height: 100%;
 }
 
 .mock-chart {

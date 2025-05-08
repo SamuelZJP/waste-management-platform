@@ -292,11 +292,13 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { 
   CaretTop, CaretBottom, Download, Refresh
 } from '@element-plus/icons-vue';
 import { getStatisticsData } from '@/services/adminService';
+import VChart from 'vue-echarts';
 
 const loading = ref(false);
 const currentPage = ref(1);
@@ -308,6 +310,319 @@ const activeTab = ref('date');
 const categoryChartType = ref('pie');
 const trendChartInterval = ref('day');
 const userChartType = ref('all');
+
+// 饼图/柱状图配置
+const categoryChartOption = computed(() => {
+  if (categoryChartType.value === 'pie') {
+    return {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c}kg ({d}%)'
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: 10,
+        data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
+      },
+      series: [
+        {
+          name: '垃圾分类',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: true,
+            formatter: '{b}: {c}kg ({d}%)'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold'
+            }
+          },
+          data: [
+            { value: 612.2, name: '厨余垃圾', itemStyle: { color: '#67C23A' } },
+            { value: 459.2, name: '可回收物', itemStyle: { color: '#409EFF' } },
+            { value: 153.0, name: '有害垃圾', itemStyle: { color: '#F56C6C' } },
+            { value: 306.1, name: '其他垃圾', itemStyle: { color: '#909399' } }
+          ]
+        }
+      ]
+    };
+  } else {
+    return {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾'],
+        bottom: 10
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '15%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'value',
+        boundaryGap: [0, 0.01],
+        axisLabel: {
+          formatter: '{value}kg'
+        }
+      },
+      yAxis: {
+        type: 'category',
+        data: ['垃圾分类']
+      },
+      series: [
+        {
+          name: '厨余垃圾',
+          type: 'bar',
+          stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [612.2],
+          itemStyle: { color: '#67C23A' }
+        },
+        {
+          name: '可回收物',
+          type: 'bar',
+          stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [459.2],
+          itemStyle: { color: '#409EFF' }
+        },
+        {
+          name: '有害垃圾',
+          type: 'bar',
+          stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [153.0],
+          itemStyle: { color: '#F56C6C' }
+        },
+        {
+          name: '其他垃圾',
+          type: 'bar',
+          stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [306.1],
+          itemStyle: { color: '#909399' }
+        }
+      ]
+    };
+  }
+});
+
+// 回收趋势图配置
+const trendChartOption = computed(() => {
+  // 获取日期数据和对应的值
+  const { dates, values } = getTrendData();
+  
+  return {
+    tooltip: {
+      trigger: 'axis',
+      formatter: '{b}<br />{a}: {c}kg'
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: dates
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value}kg'
+      }
+    },
+    series: [
+      {
+        name: '回收总量',
+        type: 'line',
+        stack: 'Total',
+        data: values,
+        smooth: true,
+        lineStyle: {
+          width: 3,
+          color: '#409EFF'
+        },
+        itemStyle: {
+          color: '#409EFF'
+        },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0, 
+                color: 'rgba(64, 158, 255, 0.7)'
+              },
+              {
+                offset: 1, 
+                color: 'rgba(64, 158, 255, 0.1)'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  };
+});
+
+// 用户参与图表配置
+const userChartOption = computed(() => {
+  const userData = getUserData();
+  return {
+    color: ['#409EFF', '#67C23A', '#E6A23C'],
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        crossStyle: {
+          color: '#999'
+        }
+      }
+    },
+    legend: {
+      data: ['用户数', '回收次数', '人均回收次数'],
+      bottom: 10
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '15%',
+      containLabel: true
+    },
+    xAxis: [
+      {
+        type: 'category',
+        data: userData.dates,
+        axisPointer: {
+          type: 'shadow'
+        }
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        name: '数量',
+        min: 0,
+        max: 500,
+        interval: 100,
+        axisLabel: {
+          formatter: '{value}'
+        }
+      },
+      {
+        type: 'value',
+        name: '人均',
+        min: 0,
+        max: 5,
+        interval: 1,
+        axisLabel: {
+          formatter: '{value}'
+        }
+      }
+    ],
+    series: [
+      {
+        name: '用户数',
+        type: 'bar',
+        data: userData.users,
+        barWidth: '20%'
+      },
+      {
+        name: '回收次数',
+        type: 'bar',
+        data: userData.times,
+        barWidth: '20%'
+      },
+      {
+        name: '人均回收次数',
+        type: 'line',
+        yAxisIndex: 1,
+        data: userData.avgTimes,
+        smooth: true
+      }
+    ]
+  };
+});
+
+// 获取趋势数据
+const getTrendData = () => {
+  let dates = [];
+  let values = [];
+  
+  if (trendChartInterval.value === 'day') {
+    // 最近15天数据
+    dates = Array.from({length: 15}, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - 14 + i);
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    });
+    values = [45, 60, 75, 95, 85, 110, 120, 100, 90, 105, 115, 125, 95, 80, 75];
+  } else if (trendChartInterval.value === 'week') {
+    // 最近8周数据
+    dates = Array.from({length: 8}, (_, i) => `第${i+1}周`);
+    values = [300, 450, 500, 380, 420, 550, 480, 400];
+  } else {
+    // 最近12个月数据
+    dates = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    values = [1200, 1400, 1800, 2000, 1700, 1900, 2200, 2400, 2100, 1800, 1600, 1500];
+  }
+  
+  return {dates, values};
+};
+
+// 获取用户数据
+const getUserData = () => {
+  let dates, users, times, avgTimes;
+  
+  if (userChartType.value === 'all') {
+    dates = ['1月', '2月', '3月', '4月', '5月', '6月', '7月'];
+    users = [320, 350, 390, 420, 450, 470, 500];
+    times = [350, 400, 450, 500, 550, 600, 650];
+    avgTimes = [1.1, 1.15, 1.2, 1.2, 1.25, 1.3, 1.35];
+  } else if (userChartType.value === 'active') {
+    dates = ['1月', '2月', '3月', '4月', '5月', '6月', '7月'];
+    users = [200, 230, 250, 280, 300, 320, 350];
+    times = [300, 350, 380, 420, 450, 500, 550];
+    avgTimes = [1.5, 1.55, 1.6, 1.65, 1.7, 1.75, 1.8];
+  } else {
+    dates = ['1月', '2月', '3月', '4月', '5月', '6月', '7月'];
+    users = [50, 60, 70, 80, 90, 100, 110];
+    times = [40, 50, 60, 70, 80, 90, 100];
+    avgTimes = [0.8, 0.85, 0.9, 0.95, 1.0, 1.0, 1.0];
+  }
+  
+  return {dates, users, times, avgTimes};
+};
 
 // 筛选表单
 const filterForm = ref({
@@ -894,6 +1209,19 @@ onMounted(() => {
   ];
   
   loadData();
+  
+  // 监听图表类型和时间间隔变化
+  watch(categoryChartType, () => {
+    // 当饼图/柱状图类型变化时，categoryChartOption 计算属性会自动更新
+  });
+  
+  watch(trendChartInterval, () => {
+    // 当趋势图时间间隔变化时，trendChartOption 计算属性会自动更新
+  });
+  
+  watch(userChartType, () => {
+    // 当用户图表类型变化时，userChartOption 计算属性会自动更新
+  });
 });
 </script>
 
@@ -1022,6 +1350,11 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.chart {
+  width: 100%;
+  height: 100%;
 }
 
 .chart-container img {

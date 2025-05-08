@@ -27,5 +27,6 @@ app.use(ElementPlus, { size: 'default', zIndex: 3000 })
 app.use(BaiduMap, {
   ak: '9jFQ71HDXSRknzpwToVtwsVtkc6EZJGg',
 })
+app.use(echarts);
 // 挂载应用
 app.mount('#app')
