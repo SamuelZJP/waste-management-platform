@@ -24,7 +24,13 @@
               </div>
               <div class="upload-hint">支持JPG、PNG、JPEG格式图片</div>
             </div>
-            <img v-else :src="imageUrl" class="preview-image" />
+            <div v-else>
+              <div v-if="recognizing" class="recognizing-overlay">
+                <el-icon class="loading-icon" :size="32"><Loading /></el-icon>
+                <div class="recognizing-text">识别中...</div>
+              </div>
+              <img :src="imageUrl" class="preview-image" />
+            </div>
           </el-upload>
           
           <div class="upload-actions">
@@ -93,7 +99,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Upload } from '@element-plus/icons-vue';
+import { Upload, Loading } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { recognizeWaste } from '@/services/wasteService';
 
@@ -157,12 +163,18 @@ const startRecognize = async () => {
     if (res.code === 200) {
       recognizeResult.value = res.data;
       ElMessage.success('识别成功');
+      
+      // 添加一个平滑滚动到识别结果
+      setTimeout(() => {
+        document.querySelector('.result-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     } else {
       ElMessage.error(res.message || '识别失败');
     }
   } catch (error) {
     console.error('识别失败:', error);
-    ElMessage.error('识别失败，请稍后重试');
+    const errorMsg = error.response?.data?.message || error.message || '识别失败，请稍后重试';
+    ElMessage.error(errorMsg);
   } finally {
     recognizing.value = false;
   }
@@ -243,6 +255,41 @@ const startRecognize = async () => {
   max-width: 100%;
   max-height: 300px;
   margin: 20px 0;
+}
+
+.recognizing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 6px;
+}
+
+.loading-icon {
+  color: #fff;
+  animation: rotate 1.5s linear infinite;
+}
+
+.recognizing-text {
+  color: #fff;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .upload-actions {

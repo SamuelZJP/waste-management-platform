@@ -61,6 +61,27 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- 阿里云图像识别SDK -->
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>imagerecog20190930</artifactId>
+			<version>1.0.9</version>
+		</dependency>
+		
+		<!-- 阿里云SDK核心依赖 -->
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>tea-openapi</artifactId>
+			<version>0.2.8</version>
+		</dependency>
+		
+		<!-- 阿里云工具包 -->
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>tea-util</artifactId>
+			<version>0.2.16</version>
+		</dependency>
 	</dependencies>
 
 	<build>

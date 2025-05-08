@@ -5,6 +5,7 @@ import request from '@/utils/request';
 import { wasteCategories, wasteItems, recognizeResult, searchResult } from '@/mock/waste';
 
 // 使用mock数据模拟API请求
+// 垃圾识别接口使用真实API请求，其他功能仍使用模拟数据
 const useMock = true;
 
 /**
@@ -91,13 +92,7 @@ export function searchWaste(params) {
  * @returns {Promise}
  */
 export function recognizeWaste(formData) {
-  if (useMock) {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve(recognizeResult);
-      }, 1000);
-    });
-  }
+  // 垃圾识别功能始终使用实际API
   return request({
     url: '/waste/recognize',
     method: 'post',

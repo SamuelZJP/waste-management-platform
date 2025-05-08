@@ -292,13 +292,12 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { ref, computed, onMounted, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { 
   CaretTop, CaretBottom, Download, Refresh
 } from '@element-plus/icons-vue';
 import { getStatisticsData } from '@/services/adminService';
-import VChart from 'vue-echarts';
+// import VChart from 'vue-echarts';
 
 const loading = ref(false);
 const currentPage = ref(1);
@@ -885,238 +884,238 @@ const mockStatisticsData = () => {
     activeTab.value === 'station' ? stations.value.length : 4;
 };
 
-// 垃圾分类占比图表配置
-const categoryChartOption = computed(() => {
-  if (categoryChartType.value === 'pie') {
-    return {
-      title: {
-        text: '垃圾分类占比',
-        left: 'center'
-      },
-      tooltip: {
-        trigger: 'item',
-        formatter: '{a} <br/>{b}: {c}kg ({d}%)'
-      },
-      legend: {
-        orient: 'vertical',
-        left: 10,
-        top: 'middle',
-        data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
-      },
-      series: [
-        {
-          name: '垃圾分类',
-          type: 'pie',
-          radius: '55%',
-          center: ['55%', '50%'],
-          data: [
-            { value: 612.2, name: '厨余垃圾' },
-            { value: 459.2, name: '可回收物' },
-            { value: 153.0, name: '有害垃圾' },
-            { value: 306.1, name: '其他垃圾' }
-          ],
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          }
-        }
-      ]
-    };
-  } else {
-    return {
-      title: {
-        text: '垃圾分类占比',
-        left: 'center'
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
-        },
-        formatter: '{b}: {c}kg'
-      },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
-      },
-      yAxis: {
-        type: 'value',
-        axisLabel: {
-          formatter: '{value} kg'
-        }
-      },
-      series: [
-        {
-          name: '重量',
-          type: 'bar',
-          data: [612.2, 459.2, 153.0, 306.1],
-          itemStyle: {
-            color: function(params) {
-              const colors = ['#67C23A', '#409EFF', '#F56C6C', '#E6A23C'];
-              return colors[params.dataIndex];
-            }
-          },
-          label: {
-            show: true,
-            position: 'top',
-            formatter: '{c} kg'
-          }
-        }
-      ]
-    };
-  }
-});
+// // 垃圾分类占比图表配置
+// const categoryChartOption = computed(() => {
+//   if (categoryChartType.value === 'pie') {
+//     return {
+//       title: {
+//         text: '垃圾分类占比',
+//         left: 'center'
+//       },
+//       tooltip: {
+//         trigger: 'item',
+//         formatter: '{a} <br/>{b}: {c}kg ({d}%)'
+//       },
+//       legend: {
+//         orient: 'vertical',
+//         left: 10,
+//         top: 'middle',
+//         data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
+//       },
+//       series: [
+//         {
+//           name: '垃圾分类',
+//           type: 'pie',
+//           radius: '55%',
+//           center: ['55%', '50%'],
+//           data: [
+//             { value: 612.2, name: '厨余垃圾' },
+//             { value: 459.2, name: '可回收物' },
+//             { value: 153.0, name: '有害垃圾' },
+//             { value: 306.1, name: '其他垃圾' }
+//           ],
+//           emphasis: {
+//             itemStyle: {
+//               shadowBlur: 10,
+//               shadowOffsetX: 0,
+//               shadowColor: 'rgba(0, 0, 0, 0.5)'
+//             }
+//           }
+//         }
+//       ]
+//     };
+//   } else {
+//     return {
+//       title: {
+//         text: '垃圾分类占比',
+//         left: 'center'
+//       },
+//       tooltip: {
+//         trigger: 'axis',
+//         axisPointer: {
+//           type: 'shadow'
+//         },
+//         formatter: '{b}: {c}kg'
+//       },
+//       grid: {
+//         left: '3%',
+//         right: '4%',
+//         bottom: '3%',
+//         containLabel: true
+//       },
+//       xAxis: {
+//         type: 'category',
+//         data: ['厨余垃圾', '可回收物', '有害垃圾', '其他垃圾']
+//       },
+//       yAxis: {
+//         type: 'value',
+//         axisLabel: {
+//           formatter: '{value} kg'
+//         }
+//       },
+//       series: [
+//         {
+//           name: '重量',
+//           type: 'bar',
+//           data: [612.2, 459.2, 153.0, 306.1],
+//           itemStyle: {
+//             color: function(params) {
+//               const colors = ['#67C23A', '#409EFF', '#F56C6C', '#E6A23C'];
+//               return colors[params.dataIndex];
+//             }
+//           },
+//           label: {
+//             show: true,
+//             position: 'top',
+//             formatter: '{c} kg'
+//           }
+//         }
+//       ]
+//     };
+//   }
+// });
 
-// 回收趋势图表配置
-const trendChartOption = computed(() => {
-  // 根据选择的时间间隔生成数据
-  let xAxisData, data;
-  const now = new Date();
+// // 回收趋势图表配置
+// const trendChartOption = computed(() => {
+//   // 根据选择的时间间隔生成数据
+//   let xAxisData, data;
+//   const now = new Date();
   
-  if (trendChartInterval.value === 'day') {
-    // 显示最近7天
-    xAxisData = Array.from({length: 7}, (_, i) => {
-      const date = new Date(now);
-      date.setDate(date.getDate() - 6 + i);
-      return `${date.getMonth() + 1}/${date.getDate()}`;
-    });
-    data = [120, 132, 101, 134, 90, 230, 210];
-  } else if (trendChartInterval.value === 'week') {
-    // 显示最近4周
-    xAxisData = Array.from({length: 4}, (_, i) => `第${i + 1}周`);
-    data = [520, 632, 701, 834];
-  } else {
-    // 显示最近6个月
-    xAxisData = Array.from({length: 6}, (_, i) => {
-      const date = new Date(now);
-      date.setMonth(date.getMonth() - 5 + i);
-      return `${date.getMonth() + 1}月`;
-    });
-    data = [2200, 1820, 1910, 2340, 2900, 3300];
-  }
+//   if (trendChartInterval.value === 'day') {
+//     // 显示最近7天
+//     xAxisData = Array.from({length: 7}, (_, i) => {
+//       const date = new Date(now);
+//       date.setDate(date.getDate() - 6 + i);
+//       return `${date.getMonth() + 1}/${date.getDate()}`;
+//     });
+//     data = [120, 132, 101, 134, 90, 230, 210];
+//   } else if (trendChartInterval.value === 'week') {
+//     // 显示最近4周
+//     xAxisData = Array.from({length: 4}, (_, i) => `第${i + 1}周`);
+//     data = [520, 632, 701, 834];
+//   } else {
+//     // 显示最近6个月
+//     xAxisData = Array.from({length: 6}, (_, i) => {
+//       const date = new Date(now);
+//       date.setMonth(date.getMonth() - 5 + i);
+//       return `${date.getMonth() + 1}月`;
+//     });
+//     data = [2200, 1820, 1910, 2340, 2900, 3300];
+//   }
   
-  return {
-    title: {
-      text: '回收趋势',
-      left: 'center'
-    },
-    tooltip: {
-      trigger: 'axis',
-      formatter: '{b}<br />{a}: {c} kg'
-    },
-    xAxis: {
-      type: 'category',
-      data: xAxisData
-    },
-    yAxis: {
-      type: 'value',
-      axisLabel: {
-        formatter: '{value} kg'
-      }
-    },
-    series: [
-      {
-        name: '回收总量',
-        type: 'line',
-        data: data,
-        symbolSize: 8,
-        smooth: true,
-        markPoint: {
-          data: [
-            { type: 'max', name: '最大值' },
-            { type: 'min', name: '最小值' }
-          ]
-        },
-        markLine: {
-          data: [{ type: 'average', name: '平均值' }]
-        },
-        areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              {
-                offset: 0,
-                color: 'rgba(64, 158, 255, 0.5)'
-              },
-              {
-                offset: 1,
-                color: 'rgba(64, 158, 255, 0.1)'
-              }
-            ]
-          }
-        }
-      }
-    ]
-  };
-});
+//   return {
+//     title: {
+//       text: '回收趋势',
+//       left: 'center'
+//     },
+//     tooltip: {
+//       trigger: 'axis',
+//       formatter: '{b}<br />{a}: {c} kg'
+//     },
+//     xAxis: {
+//       type: 'category',
+//       data: xAxisData
+//     },
+//     yAxis: {
+//       type: 'value',
+//       axisLabel: {
+//         formatter: '{value} kg'
+//       }
+//     },
+//     series: [
+//       {
+//         name: '回收总量',
+//         type: 'line',
+//         data: data,
+//         symbolSize: 8,
+//         smooth: true,
+//         markPoint: {
+//           data: [
+//             { type: 'max', name: '最大值' },
+//             { type: 'min', name: '最小值' }
+//           ]
+//         },
+//         markLine: {
+//           data: [{ type: 'average', name: '平均值' }]
+//         },
+//         areaStyle: {
+//           color: {
+//             type: 'linear',
+//             x: 0,
+//             y: 0,
+//             x2: 0,
+//             y2: 1,
+//             colorStops: [
+//               {
+//                 offset: 0,
+//                 color: 'rgba(64, 158, 255, 0.5)'
+//               },
+//               {
+//                 offset: 1,
+//                 color: 'rgba(64, 158, 255, 0.1)'
+//               }
+//             ]
+//           }
+//         }
+//       }
+//     ]
+//   };
+// });
 
-// 用户参与情况图表配置
-const userChartOption = computed(() => {
-  // 根据选择的用户类型生成数据
-  let seriesData;
+// // 用户参与情况图表配置
+// const userChartOption = computed(() => {
+//   // 根据选择的用户类型生成数据
+//   let seriesData;
   
-  if (userChartType.value === 'all') {
-    seriesData = [120, 200, 150, 80, 70, 110, 130];
-  } else if (userChartType.value === 'active') {
-    seriesData = [80, 120, 90, 50, 40, 70, 90];
-  } else {
-    seriesData = [40, 80, 60, 30, 30, 40, 40];
-  }
+//   if (userChartType.value === 'all') {
+//     seriesData = [120, 200, 150, 80, 70, 110, 130];
+//   } else if (userChartType.value === 'active') {
+//     seriesData = [80, 120, 90, 50, 40, 70, 90];
+//   } else {
+//     seriesData = [40, 80, 60, 30, 30, 40, 40];
+//   }
   
-  return {
-    title: {
-      text: '用户参与情况',
-      left: 'center'
-    },
-    tooltip: {
-      trigger: 'axis'
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        name: '参与用户数',
-        type: 'bar',
-        barWidth: '60%',
-        data: seriesData,
-        itemStyle: {
-          color: function(params) {
-            const colors = ['#67C23A', '#67C23A', '#67C23A', '#67C23A', '#67C23A', '#409EFF', '#409EFF'];
-            return colors[params.dataIndex];
-          }
-        },
-        label: {
-          show: true,
-          position: 'top'
-        }
-      }
-    ]
-  };
-});
+//   return {
+//     title: {
+//       text: '用户参与情况',
+//       left: 'center'
+//     },
+//     tooltip: {
+//       trigger: 'axis'
+//     },
+//     grid: {
+//       left: '3%',
+//       right: '4%',
+//       bottom: '3%',
+//       containLabel: true
+//     },
+//     xAxis: {
+//       type: 'category',
+//       data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+//     },
+//     yAxis: {
+//       type: 'value'
+//     },
+//     series: [
+//       {
+//         name: '参与用户数',
+//         type: 'bar',
+//         barWidth: '60%',
+//         data: seriesData,
+//         itemStyle: {
+//           color: function(params) {
+//             const colors = ['#67C23A', '#67C23A', '#67C23A', '#67C23A', '#67C23A', '#409EFF', '#409EFF'];
+//             return colors[params.dataIndex];
+//           }
+//         },
+//         label: {
+//           show: true,
+//           position: 'top'
+//         }
+//       }
+//     ]
+//   };
+// });
 
 // 垃圾站排名图表配置
 const rankingChartOption = computed(() => {

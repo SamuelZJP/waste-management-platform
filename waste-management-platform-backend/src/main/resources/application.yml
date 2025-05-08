@@ -1,0 +1,24 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# 日志配置
+logging:
+  level:
+    com.mitagret.waste_management_platform_backend: debug
+
+# 阿里云配置
+aliyun:
+  access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID}
+  access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET}
+#   access-key-id: ALIBABA_CLOUD_ACCESS_KEY_ID
+#   access-key-secret: ALIBABA_CLOUD_ACCESS_KEY_SECRET
+  image-recog:
+    endpoint: imagerecog.cn-shanghai.aliyuncs.com 
