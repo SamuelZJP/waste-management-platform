@@ -18,6 +18,7 @@ import com.aliyun.teautil.Common;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.mitagret.waste_management_platform_backend.model.WasteItem;
 import com.mitagret.waste_management_platform_backend.model.WasteRecognizeResult;
+import com.mitagret.waste_management_platform_backend.service.FileStorageService;
 import com.mitagret.waste_management_platform_backend.service.WasteRecognizeService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class WasteRecognizeServiceImpl implements WasteRecognizeService {
 
     @Autowired
     private Client imageRecogClient;
+    
+    @Autowired
+    private FileStorageService fileStorageService;
     
     // 用于生成识别ID
     private static final AtomicLong RECOGNIZE_ID_GENERATOR = new AtomicLong(1);
@@ -80,6 +84,10 @@ public class WasteRecognizeServiceImpl implements WasteRecognizeService {
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new IllegalArgumentException("文件类型必须为图片");
         }
+        
+        // 保存上传的图片到本地
+        String imagePath = fileStorageService.saveFile(file, "waste");
+        log.info("图片已保存至: {}", imagePath);
         
         // 获取图片字节数组
         byte[] imageBytes = file.getBytes();
@@ -160,7 +168,7 @@ public class WasteRecognizeServiceImpl implements WasteRecognizeService {
             // 创建识别结果
             return WasteRecognizeResult.builder()
                     .recognizeId(RECOGNIZE_ID_GENERATOR.getAndIncrement())
-                    .imageUrl("") // 由于没有保存图片，所以不返回URL
+                    .imageUrl(imagePath) // 返回保存的图片路径
                     .result(standardCategory)
                     .accuracy(accuracy)
                     .wasteItem(wasteItem)

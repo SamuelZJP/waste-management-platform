@@ -16,9 +16,17 @@ logging:
 
 # 阿里云配置
 aliyun:
-  access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID}
-  access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET}
-#   access-key-id: ALIBABA_CLOUD_ACCESS_KEY_ID
-#   access-key-secret: ALIBABA_CLOUD_ACCESS_KEY_SECRET
+  # access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID}
+  # access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET}
+  access-key-id: ALIBABA_CLOUD_ACCESS_KEY_ID
+  access-key-secret: ALIBABA_CLOUD_ACCESS_KEY_SECRET
   image-recog:
     endpoint: imagerecog.cn-shanghai.aliyuncs.com 
+
+# 文件存储配置
+file:
+  upload:
+    # 图片存储路径
+    image-path: upload/images/waste
+    # 是否创建不存在的目录
+    create-dir: true 
